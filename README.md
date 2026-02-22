@@ -3,6 +3,9 @@
 ## Overview
 This is the submission for the ClearPath Customer Support Chatbot. It implements a local RAG pipeline without managed services, deterministic rule-based model routing between `llama-3.1-8b-instant` and `llama-3.3-70b-versatile`, an output evaluator, and a vanilla HTML/JS frontend.
 
+## Video Walkthrough
+[Link](https://drive.google.com/file/d/1PZDpiSRJOoF8oIdhyH6FdnrZ_BH_UZaX/view?usp=sharing)
+
 ## Instructions to Run Locally
 
 ### Prerequisites
@@ -23,7 +26,8 @@ This is the submission for the ClearPath Customer Support Chatbot. It implements
 
 3. Install requirements
    ```bash
-   pip install fastapi uvicorn groq pypdf sentence-transformers faiss-cpu python-dotenv python-multipart
+   cd backend
+   pip install -r requirements.txt
    ```
 
 4. Configure your Environment Variables
@@ -56,3 +60,4 @@ This is the submission for the ClearPath Customer Support Chatbot. It implements
 ## Known Limitations
 - The FAISS index builds synchronously on application startup, which is functional for this scale but not viable for dynamic document ingestion.
 - The conversation memory uses unbounded in-memory dictionaries. In a real environment, this should be backed by Redis with a TTL.
+- **Deployment Limitations:** The application is fully functional locally. However, when deploying to free-tier cloud providers like Render (which limit RAM to 512MB and have strict 2-minute port binding timeouts), the application may crash with an `Out of memory` error or timeout during startup. This is because the local SentenceTransformers model (`all-MiniLM-L6-v2`) requires more memory and time to process 30 PDFs and build the FAISS vector index than the free tier provides. For a production deployment, the vector database loading and index building should be separated into a background worker or an external vector database (like Pinecone) should be used.
